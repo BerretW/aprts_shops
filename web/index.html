@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="app" style="display: none;">
+        <div class="sidebar">
+            <h2><i class="fa-solid fa-shop"></i> Správa</h2>
+            <button onclick="SwitchTab('overview')" class="active-tab"><i class="fa-solid fa-chart-line"></i> Přehled</button>
+            <button onclick="SwitchTab('products')"><i class="fa-solid fa-box"></i> Zboží & Ceny</button>
+            <button onclick="SwitchTab('settings')"><i class="fa-solid fa-cog"></i> Nastavení</button>
+            <div class="bottom-btn">
+                <button onclick="CloseUI()" class="logout"><i class="fa-solid fa-door-open"></i> Zavřít</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- PŘEHLED -->
+            <div id="overview" class="tab-content">
+                <h1>Vítejte v obchodu <span id="shop-name"></span></h1>
+                <div class="stats-box">
+                    <div class="stat">
+                        <h3>Dostupné finance</h3>
+                        <p class="money-text">$<span id="shop-money">0</span></p>
+                        <button onclick="WithdrawMoney()">Vybrat</button>
+                    </div>
+                    <div class="stat">
+                        <h3>Vlastník</h3>
+                        <p id="shop-owner">Nikdo</p>
+                    </div>
+                </div>
+            </div>
+
+           <!-- ZBOŽÍ A CENÍK -->
+<div id="products" class="tab-content" style="display:none;">
+    <div class="header-row">
+        <h1>Správa ceníku</h1>
+    </div>
+
+    <!-- Sekce pro přidání nového itemu -->
+    <div class="add-item-box" style="background: #25262b; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <h3>Přidat item do obchodu</h3>
+        <div style="display: flex; gap: 10px;">
+            <!-- Datalist pro našeptávání itemů -->
+            <input list="all-items-datalist" id="new-item-input" placeholder="Napiš název itemu (např. Voda)..." style="flex-grow: 1;">
+            <datalist id="all-items-datalist">
+                <!-- Zde se načtou všechny itemy -->
+            </datalist>
+            
+            <input type="number" id="new-item-price" placeholder="Cena" style="width: 100px;">
+            <button onclick="AddNewItem()">Přidat</button>
+        </div>
+    </div>
+
+    <!-- Tabulka aktuálně nastavených itemů -->
+    <div class="products-list-container">
+        <h3>Nastavené ceny</h3>
+        <table id="products-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Aktuální cena ($)</th>
+                    <th>Akce</th>
+                </tr>
+            </thead>
+            <tbody id="products-list">
+                <!-- Zde se načtou itemy přes JS -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+            <!-- NASTAVENÍ (ADMIN ONLY) -->
+            <div id="settings" class="tab-content" style="display:none;">
+                <h1>Nastavení obchodu</h1>
+                <div class="form-group">
+                    <label>Změnit název obchodu</label>
+                    <input type="text" id="new-shop-name" placeholder="Nový název">
+                    <button onclick="SaveSettings()">Uložit</button>
+                </div>
+                <div id="admin-actions" style="margin-top: 20px; border-top: 1px solid #444; padding-top:10px;">
+                    <h3>Admin Akce</h3>
+                    <button onclick="AdminDeleteShop()" class="btn-danger">Smazat obchod</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
