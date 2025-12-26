@@ -9,6 +9,7 @@ shared_scripts { '@ox_lib/init.lua', 'config.lua' }
 
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
+    'server/bridge.lua', -- ZDE TO CHYBĚLO
     'server/main.lua'
 }
 
@@ -20,4 +21,4 @@ files {
     'web/script.js'
 }
 
-dependencies { 'ox_lib', 'ox_inventory', 'ox_target' }
+dependencies { 'ox_lib', 'ox_inventory', 'ox_target', 'qb-core' }

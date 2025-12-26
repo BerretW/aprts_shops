@@ -2,93 +2,205 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop UI</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div id="app" style="display: none;">
+
+    <!-- ========================================= -->
+    <!-- 1. MANAGEMENT UI (PRO MAJITELE / ADMINA)  -->
+    <!-- ========================================= -->
+    <div id="management-app" class="app-container" style="display: none;">
+        
+        <!-- Levý panel (Menu) -->
         <div class="sidebar">
             <h2><i class="fa-solid fa-shop"></i> Správa</h2>
-            <button onclick="SwitchTab('overview')" class="active-tab"><i class="fa-solid fa-chart-line"></i> Přehled</button>
-            <button onclick="SwitchTab('products')"><i class="fa-solid fa-box"></i> Zboží & Ceny</button>
-            <button onclick="SwitchTab('settings')"><i class="fa-solid fa-cog"></i> Nastavení</button>
+            
+            <div class="nav-buttons">
+                <button onclick="SwitchTab('overview')" id="btn-overview" class="active-tab">
+                    <i class="fa-solid fa-chart-line"></i> Přehled
+                </button>
+                <button onclick="SwitchTab('products')" id="btn-products">
+                    <i class="fa-solid fa-box"></i> Zboží & Ceny
+                </button>
+                <button onclick="SwitchTab('settings')" id="btn-settings">
+                    <i class="fa-solid fa-cog"></i> Nastavení
+                </button>
+            </div>
+
             <div class="bottom-btn">
-                <button onclick="CloseUI()" class="logout"><i class="fa-solid fa-door-open"></i> Zavřít</button>
+                <button onclick="CloseUI()" class="logout">
+                    <i class="fa-solid fa-door-open"></i> Zavřít
+                </button>
             </div>
         </div>
 
+        <!-- Pravý panel (Obsah) -->
         <div class="content">
-            <!-- PŘEHLED -->
+            
+            <!-- TAB: PŘEHLED -->
             <div id="overview" class="tab-content">
-                <h1>Vítejte v obchodu <span id="shop-name"></span></h1>
+                <h1>Vítejte v obchodu <span id="shop-name-display">Obchod</span></h1>
+                
                 <div class="stats-box">
-                    <div class="stat">
-                        <h3>Dostupné finance</h3>
-                        <p class="money-text">$<span id="shop-money">0</span></p>
-                        <button onclick="WithdrawMoney()">Vybrat</button>
+                    <div class="stat-card">
+                        <div class="icon-bg"><i class="fa-solid fa-sack-dollar"></i></div>
+                        <div class="stat-info">
+                            <h3>Dostupné finance</h3>
+                            <p class="money-text">$<span id="shop-money">0</span></p>
+                        </div>
+                        <button class="action-btn" onclick="WithdrawMoney()">Vybrat peníze</button>
                     </div>
-                    <div class="stat">
-                        <h3>Vlastník</h3>
-                        <p id="shop-owner">Nikdo</p>
+
+                    <div class="stat-card">
+                        <div class="icon-bg"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="stat-info">
+                            <h3>Vlastník</h3>
+                            <p id="shop-owner">Načítání...</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-           <!-- ZBOŽÍ A CENÍK -->
-<div id="products" class="tab-content" style="display:none;">
-    <div class="header-row">
-        <h1>Správa ceníku</h1>
-    </div>
+            <!-- TAB: PRODUKTY A CENY -->
+            <div id="products" class="tab-content" style="display:none;">
+                
+                <!-- Sub-navigace uvnitř produktů -->
+                <div class="sub-nav">
+                    <button onclick="SwitchProductView('stock')" id="sub-btn-stock" class="active-sub">Sklad & Ceny</button>
+                    <button onclick="SwitchProductView('deposit')" id="sub-btn-deposit">Vložit zboží</button>
+                </div>
 
-    <!-- Sekce pro přidání nového itemu -->
-    <div class="add-item-box" style="background: #25262b; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-        <h3>Přidat item do obchodu</h3>
-        <div style="display: flex; gap: 10px;">
-            <!-- Datalist pro našeptávání itemů -->
-            <input list="all-items-datalist" id="new-item-input" placeholder="Napiš název itemu (např. Voda)..." style="flex-grow: 1;">
-            <datalist id="all-items-datalist">
-                <!-- Zde se načtou všechny itemy -->
-            </datalist>
-            
-            <input type="number" id="new-item-price" placeholder="Cena" style="width: 100px;">
-            <button onclick="AddNewItem()">Přidat</button>
-        </div>
-    </div>
+                <!-- POHLED 1: AKTUÁLNÍ SKLAD -->
+                <div id="view-stock">
+                    <div class="products-list-container">
+                        <table id="products-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Skladem</th>
+                                    <th>Cena/ks</th>
+                                    <th style="text-align: right;">Akce</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-list">
+                                <!-- Generováno JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-    <!-- Tabulka aktuálně nastavených itemů -->
-    <div class="products-list-container">
-        <h3>Nastavené ceny</h3>
-        <table id="products-table">
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Aktuální cena ($)</th>
-                    <th>Akce</th>
-                </tr>
-            </thead>
-            <tbody id="products-list">
-                <!-- Zde se načtou itemy přes JS -->
-            </tbody>
-        </table>
-    </div>
-</div>
+                <!-- POHLED 2: VKLAD Z INVENTÁŘE -->
+                <div id="view-deposit" style="display: none;">
+                    <div class="deposit-header">
+                        <h3>Vyber item k naskladnění</h3>
+                        <input type="text" id="inventory-search" placeholder="Hledat..." onkeyup="FilterInventory()">
+                    </div>
+                    
+                    <div class="inventory-grid" id="inventory-grid">
+                        <!-- Zde se zobrazí itemy hráče -->
+                    </div>
 
-            <!-- NASTAVENÍ (ADMIN ONLY) -->
+                    <!-- Modal/Panel pro nastavení ceny a počtu při vkladu -->
+                    <div id="deposit-settings" style="display:none; margin-top: 20px; padding: 20px; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px;">
+                        <h4 id="deposit-item-name">Vkládání itemu...</h4>
+                        <div class="input-group">
+                            <div class="input-col">
+                                <label>Množství k vložení (Máš: <span id="max-deposit">0</span>)</label>
+                                <input type="number" id="deposit-count" value="1" min="1">
+                            </div>
+                            <div class="input-col">
+                                <label>Cena za kus ($)</label>
+                                <input type="number" id="deposit-price" placeholder="Cena">
+                            </div>
+                            <button onclick="ConfirmDeposit()" class="confirm-btn">Vložit do obchodu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="settings" class="tab-content" style="display:none;">
                 <h1>Nastavení obchodu</h1>
-                <div class="form-group">
+                
+                <div class="setting-group">
                     <label>Změnit název obchodu</label>
-                    <input type="text" id="new-shop-name" placeholder="Nový název">
-                    <button onclick="SaveSettings()">Uložit</button>
+                    <div class="input-group">
+                        <input type="text" id="new-shop-name" placeholder="Nový název...">
+                    </div>
                 </div>
-                <div id="admin-actions" style="margin-top: 20px; border-top: 1px solid #444; padding-top:10px;">
-                    <h3>Admin Akce</h3>
-                    <button onclick="AdminDeleteShop()" class="btn-danger">Smazat obchod</button>
+
+                <!-- NOVÉ: BLIP & ČAS -->
+                <div class="settings-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                    
+                    <!-- Vzhled na mapě -->
+                    <div class="setting-box" style="background: var(--bg-panel); padding: 15px; border-radius: 8px;">
+                        <h3><i class="fa-solid fa-map-location-dot"></i> Vzhled na mapě</h3>
+                        <div style="margin-bottom: 10px;">
+                            <label style="font-size: 12px; color: #aaa;">ID Blipu (Sprite)</label>
+                            <input type="number" id="blip-sprite" placeholder="52 (např.)" style="width: 100%;">
+                            <small><a href="https://docs.fivem.net/docs/game-references/blips/" target="_blank" style="color:var(--accent)">Seznam ID Blipů</a></small>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: #aaa;">ID Barvy</label>
+                            <input type="number" id="blip-color" placeholder="2 (např.)" style="width: 100%;">
+                        </div>
+                    </div>
+
+                    <!-- Otevírací doba -->
+                    <div class="setting-box" style="background: var(--bg-panel); padding: 15px; border-radius: 8px;">
+                        <h3><i class="fa-solid fa-clock"></i> Otevírací doba</h3>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div style="flex:1">
+                                <label style="font-size: 12px; color: #aaa;">Od (Hodina)</label>
+                                <input type="number" id="open-hour" min="0" max="23" placeholder="0">
+                            </div>
+                            <span>-</span>
+                            <div style="flex:1">
+                                <label style="font-size: 12px; color: #aaa;">Do (Hodina)</label>
+                                <input type="number" id="close-hour" min="0" max="24" placeholder="24">
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+
+                <div style="margin-top: 20px; text-align: right;">
+                    <button onclick="SaveSettings()" class="confirm-btn" style="padding: 15px 30px; font-size: 16px;">
+                        <i class="fa-solid fa-save"></i> Uložit kompletní nastavení
+                    </button>
+                </div>
+
+                <div id="admin-actions" style="display: none; margin-top: 40px; padding-top: 20px; border-top: 1px solid #333;">
+                    <h3 style="color: #ff6b6b;">Admin Zóna</h3>
+                    <button onclick="AdminDeleteShop()" class="btn-danger">Smazat tento obchod</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========================================= -->
+    <!-- 2. BUYER UI (PRO ZÁKAZNÍKY)               -->
+    <!-- ========================================= -->
+    <div id="buyer-app" class="buyer-container" style="display: none;">
+        <div class="buyer-header">
+            <div class="header-left">
+                <i class="fa-solid fa-store"></i>
+                <h1 id="buyer-shop-title">Obchod</h1>
+            </div>
+            <button onclick="CloseUI()" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <div class="products-grid-wrapper">
+            <div class="products-grid" id="buyer-items-grid">
+                <!-- Zde se generují kartičky produktů z JS -->
             </div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
